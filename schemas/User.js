@@ -4,12 +4,18 @@ const validator = require("validator");
 
 const location = new mongoose.Schema({
   name: { type: String },
-  coordinates: { type: [mongoose.Decimal128] },
+  coordinates: {
+    lat: Number,
+    lng: Number,
+  },
 });
 
 const favorites = new mongoose.Schema({
   name: { type: String },
-  coordinates: { type: [mongoose.Decimal128] },
+  coordinates: {
+    lat: Number,
+    lng: Number,
+  },
   pointTypes: { type: [String] },
 });
 
@@ -21,10 +27,13 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   favorites: { type: [favorites] },
   currentLocation: { type: location },
-  friends: { type: [mongoose.ObjectId] },
+  friends: {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    accepted: { type: Boolean, default: false },
+  }, // User.findById(_id).populate('user', "avatar username")
   settings: { type: [String] },
-  chat: { type: [mongoose.ObjectId] },
-  travelplan: { type: [mongoose.ObjectId] },
+  chats: [{ type: mongoose.Types.ObjectId, ref: "Chat" }],
+  travelPlans: [{ type: mongoose.Types.ObjectId, ref: "TravelPlan" }],
 });
 
 userSchema.statics.signup = async function (email, password, userName, name) {
