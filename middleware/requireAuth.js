@@ -22,7 +22,7 @@ const requireAuth = async (req, res, next) => {
     req.user = await User.findOne({ _id }).select("_id");
     next();
   } catch (error) {
-    console.log(error);
+    console.log("from failed auth: ", error.message);
     res.status(401).json({ error: "Not Authorized" });
   }
 };
