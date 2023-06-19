@@ -27,10 +27,13 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   favorites: { type: [favorites] },
   currentLocation: { type: location },
-  friends: {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    accepted: { type: Boolean, default: false },
-  }, // User.findById(_id).populate('user', "avatar username")
+  friends: [
+    {
+      user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      accepted: { type: Boolean, default: false },
+      received: { type: Boolean, default: false },
+    },
+  ], // User.findById(_id).populate('user', "avatar username")
   settings: { type: [String] },
   chats: [{ type: mongoose.Types.ObjectId, ref: "Chat" }],
   travelPlans: [{ type: mongoose.Types.ObjectId, ref: "TravelPlan" }],
@@ -78,7 +81,7 @@ userSchema.statics.login = async function (loginOne, password) {
 
   const user = await this.findOne({
     $or: [{ email: loginOne }, { userName: loginOne }],
-  });
+  }).populate("friends.user", "userName avatar _id"); // in field friends: get only _id, userName and avatar
 
   if (!user) {
     throw Error("Incorrect email or user name");
@@ -93,4 +96,4 @@ userSchema.statics.login = async function (loginOne, password) {
   return user;
 };
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = mongoose.model("User", userSchema);
