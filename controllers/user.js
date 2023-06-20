@@ -15,8 +15,33 @@ const loginUser = async (req, res) => {
 
     //create tokens
     const token = createToken(user._id);
+    // select only needed data
+    const {
+      _id,
+      name,
+      userName,
+      avatar,
+      chats,
+      email,
+      friends,
+      settings,
+      travelPlans,
+    } = user;
 
-    res.status(200).json({ data: user, token });
+    res.status(200).json({
+      data: {
+        _id,
+        name,
+        userName,
+        avatar,
+        chats,
+        email,
+        friends,
+        settings,
+        travelPlans,
+      },
+      token,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -30,7 +55,32 @@ const signUpUser = async (req, res) => {
     const user = await User.signup(email, password, userName, name);
     //create token
     const token = createToken(user._id);
-    res.status(201).json({ data: user, token });
+    const {
+      _id,
+      name,
+      userName,
+      avatar,
+      chats,
+      email,
+      friends,
+      settings,
+      travelPlans,
+    } = user;
+
+    res.status(201).json({
+      data: {
+        _id,
+        name,
+        userName,
+        avatar,
+        chats,
+        email,
+        friends,
+        settings,
+        travelPlans,
+      },
+      token,
+    });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
