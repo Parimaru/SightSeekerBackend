@@ -88,19 +88,25 @@ const signUpUser = async (req, res) => {
 
 // add/change an avatar
 
-const addAvatarUser = async (req, res) => {
+const setInitialSettings = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
-
+  const { preferences, foundBy, locationServices, showEmail, showName } =
+    req.body;
   try {
-    if (!req.file || !req.file.path) return res.status(422).json({ error }); // send error if no or wrong file
-
-    const avatar = req.file.path;
+    // send error if no or wrong file
+    const avatar = req.file?.path || undefined;
     const user = await User.findByIdAndUpdate(
       { _id },
-      { avatar },
+      {
+        $addToSet: { "settings.preferences": { $each: preferences } },
+        avatar,
+        "settings.foundBy": foundBy,
+        "settings.locationServices": locationServices,
+        "settings.showEmail": showEmail,
+        "settings.showName": showName,
+      },
       { new: true }
     ); // send new avatar image url to database, replace existing
-
     if (!user) return res.status(401).json({ error });
 
     res.status(201).json({ data: user });
@@ -227,7 +233,7 @@ const handleInvitation = async (req, res) => {
 module.exports = {
   loginUser,
   signUpUser,
-  addAvatarUser,
+  setInitialSettings,
   findUsersByContact,
   inviteUserAsFriend,
   handleInvitation,
