@@ -35,4 +35,15 @@ const signUpUser = async (req, res) => {
   }
 };
 
+// const changeSettings = async (req, res) => {
+//   const _id = req.user;
+//   const { avatar, email,  } = req.body;
+//   try {
+//     const user = await User.findByIdAndUpdate(_id, {});
+//     res.status(200).json({});
+//   } catch {
+//     res.status(400).json({ error: error.message });
+//   }
+// };
+
 module.exports = { loginUser, signUpUser };

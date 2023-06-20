@@ -22,7 +22,14 @@ const userSchema = new mongoose.Schema({
   favorites: { type: [favorites] },
   currentLocation: { type: location },
   friends: { type: [mongoose.ObjectId] },
-  settings: { type: [String] },
+  settings: {
+    foundBy: {
+      type: String,
+      enum: ["all", "none", "friends"],
+      default: "all",
+    },
+  },
+  // locationServices, foundBy, showEmail, showName
   chat: { type: [mongoose.ObjectId] },
   travelplan: { type: [mongoose.ObjectId] },
 });

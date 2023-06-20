@@ -9,4 +9,7 @@ app.post("/login", loginUser);
 //Signup
 app.post("/signup", signUpUser);
 
+// Update
+// app.put("/:id", changeSettings);
+
 module.exports = app;
