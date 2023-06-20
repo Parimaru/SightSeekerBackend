@@ -7,8 +7,19 @@ const userRoutes = require("./routes/user");
 const PORT = process.env.PORT || 8080;
 
 const app = express();
-app.use(express.json());
+
+// const whitelist = ["http://localhost:3000", "https:our-nice-deployment.com"];
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Haha"));
+//     }
+//   },
+// };
 app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 connectDB();
