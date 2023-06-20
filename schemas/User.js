@@ -22,7 +22,11 @@ const favorites = new mongoose.Schema({
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   userName: { type: String, required: true, unique: true },
-  avatar: { type: String },
+  avatar: {
+    type: String,
+    default:
+      "https://images-ext-1.discordapp.net/external/GyUam2pAgNjbvCzp42knkwvqumYzrPF86Rur6U88mbU/https/res.cloudinary.com/dokiz6udc/image/upload/v1686943211/default_avatar_yfsudh.jpg?width=583&height=583",
+  },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   favorites: { type: [favorites] },
@@ -34,7 +38,32 @@ const userSchema = new mongoose.Schema({
       received: { type: Boolean, default: false },
     },
   ], // User.findById(_id).populate('user', "avatar username")
-  settings: { type: [String] },
+  settings: {
+    darkMode: {
+      type: Boolean,
+      default: false,
+    },
+    preferences: {
+      type: [String],
+    },
+    foundBy: {
+      type: String,
+      enum: ["all", "none", "friends"],
+      default: "all",
+    },
+    locationServices: {
+      type: Boolean,
+      default: true,
+    },
+    showEmail: {
+      type: Boolean,
+      default: true,
+    },
+    showName: {
+      type: Boolean,
+      default: true,
+    },
+  },
   chats: [{ type: mongoose.Types.ObjectId, ref: "Chat" }],
   travelPlans: [{ type: mongoose.Types.ObjectId, ref: "TravelPlan" }],
 });
