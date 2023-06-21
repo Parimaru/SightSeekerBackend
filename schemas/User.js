@@ -71,6 +71,7 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.signup = async function (email, password, userName, name) {
   const existsEmail = await this.findOne({ email });
   const existsUserName = await this.findOne({ userName });
+  console.log(email, password, userName, name);
 
   if (existsEmail) {
     throw Error("Email already in use");
