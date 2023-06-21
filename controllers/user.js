@@ -16,30 +16,10 @@ const loginUser = async (req, res) => {
     //create tokens
     const token = createToken(user._id);
     // select only needed data
-    const {
-      _id,
-      name,
-      userName,
-      avatar,
-      chats,
-      email,
-      friends,
-      settings,
-      travelPlans,
-    } = user;
+    delete user.password;
 
     res.status(200).json({
-      data: {
-        _id,
-        name,
-        userName,
-        avatar,
-        chats,
-        email,
-        friends,
-        settings,
-        travelPlans,
-      },
+      data: user,
       token,
     });
   } catch (error) {
@@ -50,37 +30,16 @@ const loginUser = async (req, res) => {
 // sign up user
 const signUpUser = async (req, res) => {
   const { email, password, userName, name } = req.body;
-
   try {
+    console.log("in the trycatch: ", email, password, userName, name);
+
     const user = await User.signup(email, password, userName, name);
+    console.log(user);
     //create token
     const token = createToken(user._id);
-    const {
-      _id,
-      name,
-      userName,
-      avatar,
-      chats,
-      email,
-      friends,
-      settings,
-      travelPlans,
-    } = user;
-
-    res.status(201).json({
-      data: {
-        _id,
-        name,
-        userName,
-        avatar,
-        chats,
-        email,
-        friends,
-        settings,
-        travelPlans,
-      },
-      token,
-    });
+    delete user.password;
+    console.log(user);
+    res.status(201).json({ data: user, token });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
