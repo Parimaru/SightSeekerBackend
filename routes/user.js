@@ -42,7 +42,7 @@ module.exports = app;
 // POST http://localhost:8080/user/signup  -> JSON with at least userName, name, email and password
 // POST http://localhost:8080/user/login   -> JSON with userName/email and password
 
-// PUT  http://localhost:8080/user/initialSettings -> form-data with one (jpg, jpeg, png, webp) on field "avatar" attached, token required + body: {
+// PUT  http://localhost:8080/user/initialsettings -> form-data with one (jpg, jpeg, png, webp) on field "avatar" attached, token required + body: {
 //     "_id": "648984b47bf00ee0b75b5264",
 //     "preferences": ["beach", "castle"],
 //     "foundBy": "all",
