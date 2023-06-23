@@ -71,7 +71,7 @@ const userSchema = new mongoose.Schema({
 userSchema.statics.signup = async function (email, password, userName, name) {
   const existsEmail = await this.findOne({ email });
   const existsUserName = await this.findOne({ userName });
-  console.log(email, password, userName, name);
+  // console.log(email, password, userName, name);
 
   if (existsEmail) {
     throw Error("Email already in use");
@@ -111,7 +111,7 @@ userSchema.statics.login = async function (loginOne, password) {
 
   const user = await this.findOne({
     $or: [{ email: loginOne }, { userName: loginOne }],
-  }).populate("friends.user", "userName avatar _id"); // in field friends: get only _id, userName and avatar
+  }).populate("friends.user", "userName avatar _id name"); // in field friends: get only _id, userName and avatar
 
   if (!user) {
     throw Error("Incorrect email or user name");
