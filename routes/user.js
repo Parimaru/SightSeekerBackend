@@ -4,6 +4,9 @@ const uploadAvatar = require("../services/uploadAvatar");
 const {
   loginUser,
   signUpUser,
+  changeSettings,
+  changeAvatar,
+  changeDefaultAvatar,
   setInitialSettings,
   findUsersByContact,
   inviteUserAsFriend,
@@ -18,15 +21,13 @@ app.post("/login", loginUser);
 app.post("/signup", signUpUser);
 
 // Update
-// app.put("/:id", changeSettings);
+app.put("/settings", requireAuth, changeSettings);
 
+app.put("/avatar", requireAuth, uploadAvatar.single("avatar"), changeAvatar);
+
+app.put("/default_avatar", requireAuth, changeDefaultAvatar);
 // Add/Change Avatar
-app.put(
-  "/initalsettings",
-  requireAuth,
-  uploadAvatar.single("avatar"),
-  setInitialSettings
-);
+app.put("/initalsettings", requireAuth, setInitialSettings);
 
 // Get all users by contact query  --> /user/find?search=
 app.get("/find", requireAuth, findUsersByContact);
@@ -44,13 +45,14 @@ module.exports = app;
 
 // PUT  http://localhost:8080/user/initialsettings -> form-data with one (jpg, jpeg, png, webp) on field "avatar" attached, token required + body: {
 //     "_id": "648984b47bf00ee0b75b5264",
-//     "preferences": ["beach", "castle"],
+//     "poi": ["beach", "castle"],
 //     "foundBy": "all",
 //     "locationServices": true,
 //     "showEmail": false,
 //     "showName": false
 // }
-
+// PUT  http://localhost:8080/user/changeSettings
+// PUT http://localhost:8080/user/changeAvatar
 // GET http://localhost:8080/user/find?search=${someWord}  -> no body, but token required
 
 // PUT http://localhost:8080/user/invite/:invitedUserId -> no body, but token and param

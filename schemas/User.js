@@ -43,12 +43,12 @@ const userSchema = new mongoose.Schema({
       type: Boolean,
       default: false,
     },
-    preferences: {
+    poi: {
       type: [String],
     },
     foundBy: {
       type: String,
-      enum: ["all", "none", "friends"],
+      // enum: ["all", "none", "friends"],
       default: "all",
     },
     locationServices: {
