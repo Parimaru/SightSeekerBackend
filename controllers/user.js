@@ -45,26 +45,91 @@ const signUpUser = async (req, res) => {
   }
 };
 
-// add/change an avatar
-
-const setInitialSettings = async (req, res) => {
-  const { _id } = req.user; // get user._id from req (attached via auth)
-  const { preferences, foundBy, locationServices, showEmail, showName } =
-    req.body;
+const changeAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const avatar = req.file?.path || undefined;
   try {
-    // send error if no or wrong file
-    const avatar = req.file?.path || undefined;
     const user = await User.findByIdAndUpdate(
       { _id },
       {
-        $addToSet: { "settings.preferences": { $each: preferences } },
         avatar,
+      },
+      { new: true, upsert: true, projection: { password: 0 } }
+    ); // send new avatar image url to database, replace existing
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeDefaultAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { avatar } = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        avatar,
+      },
+      { new: true, upsert: true, projection: { password: 0 } }
+    ); // send default avatar image url to database, replace existing
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeSettings = async (req, res) => {
+  const { _id } = req.user; // get user._id from req (attached via auth)
+  const {
+    // name,
+    password,
+    darkMode,
+    foundBy,
+    locationServices,
+    showEmail,
+    showName,
+  } = req.body;
+  console.log(req.body);
+  try {
+    // send error if no or wrong file
+    console.log(avatar);
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        // adapt!!!!!!!!!!!!!!!!
+        $addToSet: { "settings.poi": { $each: poi } },
         "settings.foundBy": foundBy,
         "settings.locationServices": locationServices,
         "settings.showEmail": showEmail,
         "settings.showName": showName,
       },
-      { new: true }
+      { new: true, upsert: true, projection: { password: 0 } }
+    ); // send new avatar image url to database, replace existing
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const setInitialSettings = async (req, res) => {
+  const { _id } = req.user; // get user._id from req (attached via auth)
+  const { poi, foundBy, locationServices, showEmail, showName } = req.body;
+  console.log(req.body);
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        $addToSet: { "settings.poi": { $each: poi } },
+        "settings.foundBy": foundBy,
+        "settings.locationServices": locationServices,
+        "settings.showEmail": showEmail,
+        "settings.showName": showName,
+      },
+      { new: true, upsert: true, projection: { password: 0 } }
     ); // send new avatar image url to database, replace existing
     if (!user) return res.status(401).json({ error });
 
@@ -192,6 +257,9 @@ const handleInvitation = async (req, res) => {
 module.exports = {
   loginUser,
   signUpUser,
+  changeAvatar,
+  changeDefaultAvatar,
+  changeSettings,
   setInitialSettings,
   findUsersByContact,
   inviteUserAsFriend,
