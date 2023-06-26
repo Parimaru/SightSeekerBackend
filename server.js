@@ -4,6 +4,8 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./dbinit");
 const userRoutes = require("./routes/user");
+const chatRoutes = require("./routes/ChatRoute")
+const messageRoutes = require("./routes/MessageRoute")
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -28,6 +30,10 @@ app.get("/", (req, res) => {
   res.send("Welcome");
 });
 app.use("/user", userRoutes);
+
+app.use("/chat", chatRoutes)
+
+app.use("/message", messageRoutes)
 
 app.listen(PORT, () => {
   console.log("Running".rainbow);
