@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default:
-      "https://images-ext-1.discordapp.net/external/GyUam2pAgNjbvCzp42knkwvqumYzrPF86Rur6U88mbU/https/res.cloudinary.com/dokiz6udc/image/upload/v1686943211/default_avatar_yfsudh.jpg?width=583&height=583",
+      "https://res.cloudinary.com/dokiz6udc/image/upload/v1686943211/default_avatar_yfsudh.jpg?width=100&height=100",
   },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
