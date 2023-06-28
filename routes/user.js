@@ -11,6 +11,7 @@ const {
   findUsersByContact,
   inviteUserAsFriend,
   handleInvitation,
+  retrieveUser,
 } = require("../controllers/user");
 
 const app = express.Router();
@@ -19,6 +20,9 @@ app.post("/login", loginUser);
 
 //Signup
 app.post("/signup", signUpUser);
+
+// Retrieve by token
+app.get("/retrieve", requireAuth, retrieveUser);
 
 // Update
 app.put("/settings", requireAuth, changeSettings);
