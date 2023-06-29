@@ -77,6 +77,7 @@ connectDB();
 app.get("/", cors(corsOptions), (req, res) => {
   res.send("Welcome");
 });
+
 app.use("/user", cors(corsOptions), userRoutes);
 
 app.use("/chat",cors(corsOptions), chatRoutes)
