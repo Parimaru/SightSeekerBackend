@@ -320,7 +320,6 @@ const getChatMembers = async (req, res) => {
   try {
 
     const usersArray = members.map(user => {return { _id: user}})
-    console.log(usersArray)
   
     const usersFetched = await User.find({$or: [...usersArray]})
     if (!usersFetched) return res.status(200).json({ msg: "No matching users found" })
