@@ -12,6 +12,7 @@ const {
   inviteUserAsFriend,
   handleInvitation,
   getUser,
+  getChatMembers,
 } = require("../controllers/user");
 
 const app = express.Router();
@@ -39,7 +40,8 @@ app.put("/invite/:invitedUserId", requireAuth, inviteUserAsFriend);
 // Handle invitation / accept or reject / delete friend
 app.put("/answer-invitation", requireAuth, handleInvitation);
 
-app.get("/:userId", getUser )
+// app.get("/:userId", getUser)
+app.post("/chatmembers", getChatMembers)
 
 module.exports = app;
 

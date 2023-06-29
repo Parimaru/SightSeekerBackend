@@ -300,6 +300,21 @@ const getUser = async (req, res) => {
   }
 }
 
+const getChatMembers = async (req, res) => {
+  const {members} = req.body;
+  try {
+
+    const usersArray = members.map(user => {return { _id: user}})
+    console.log(usersArray)
+  
+    const usersFetched = await User.find({$or: [...usersArray]})
+    if (!usersFetched) return res.status(200).json({ msg: "No matching users found" })
+    else res.status(200).json({ data: usersFetched })
+  }
+   catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
 // Add chatroom
 
 // Get initial user settings / update user settings
@@ -315,4 +330,5 @@ module.exports = {
   inviteUserAsFriend,
   handleInvitation,
   getUser,
+  getChatMembers,
 };
