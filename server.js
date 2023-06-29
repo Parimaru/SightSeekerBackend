@@ -77,11 +77,11 @@ connectDB();
 app.get("/", cors(corsOptions), (req, res) => {
   res.send("Welcome");
 });
-app.use("/user", cors(), userRoutes);
+app.use("/user", cors(corsOptions), userRoutes);
 
-app.use("/chat", chatRoutes)
+app.use("/chat",cors(corsOptions), chatRoutes)
 
-app.use("/message", messageRoutes)
+app.use("/message",cors(corsOptions), messageRoutes)
 
 app.listen(PORT, () => {
   console.log("Running".rainbow);
