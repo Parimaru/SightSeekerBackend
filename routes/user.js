@@ -11,6 +11,7 @@ const {
   findUsersByContact,
   inviteUserAsFriend,
   handleInvitation,
+  retrieveUser,
   getUser,
   getChatMembers,
 } = require("../controllers/user");
@@ -21,6 +22,9 @@ app.post("/login", loginUser);
 
 //Signup
 app.post("/signup", signUpUser);
+
+// Retrieve by token
+app.get("/retrieve", requireAuth, retrieveUser);
 
 // Update
 app.put("/settings", requireAuth, changeSettings);
