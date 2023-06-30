@@ -43,10 +43,9 @@ const loginUser = async (req, res) => {
 const retrieveUser = async (req, res) => {
   const { _id } = req.user;
   try {
-    const user = await User.findOne(
-      { _id },
-      { projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name");
+    const user = await User.findOne({ _id })
+      .select("-password")
+      .populate("friends.user", "userName avatar _id name");
 
     if (!user) return res.status(401).json({ error });
     res.status(201).json({ data: user });
