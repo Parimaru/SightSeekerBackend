@@ -53,7 +53,7 @@ app.listen(PORT, () => {
 });
 
 // SOCKET.IO SETUP ///
-const io = require("socket.io")(`https://sightseeker-backend.onrender.com`, {
+const io = require("socket.io")(`https://sightseeker-backend.onrender.com`, /* {
   cors: {
     origin: [
       "http://localhost:3000",
@@ -64,7 +64,7 @@ const io = require("socket.io")(`https://sightseeker-backend.onrender.com`, {
     allowedHeaders: ["Access-Control-Allow-Origin"],
     credentials: true
   },
-});
+} */);
 
 // handlePreflightRequest: (req, res) => {
 //   res.writeHead(200, {
