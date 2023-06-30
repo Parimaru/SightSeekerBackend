@@ -23,6 +23,7 @@ const corsOptions = {
       callback(new Error("Haha"));
     }
   },
+  allowedHeaders: ["Access-Control-Allow-Origin"]
 };
 
 app.use(function setCommonHeaders(req, res, next) {
@@ -59,7 +60,7 @@ const io = require("socket.io")(`https://sightseeker-backend.onrender.com:${PORT
       "https://sightseeker.netlify.app",
     ],
     methods: ["GET", "POST"],
-    allowedHeaders: /* ["Access-Control-Allow-Private-Network: true"], */ ["Access-Control-Allow-Origin"]
+    allowedHeaders: ["Access-Control-Allow-Origin"]
   },
 });
 
