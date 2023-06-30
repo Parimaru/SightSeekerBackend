@@ -88,7 +88,20 @@ const signUpUser = async (req, res) => {
   }
 };
 
+const deleteUser = async (req, res) => {
+  const { _id } = req.user;
+  try {
+    // send error if no or wrong file
+    const user = await User.deleteOne({ _id });
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ msg: `Deleted user with id ${_id}` });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const changeAvatar = async (req, res) => {
+  console.log(req.user);
   const { _id } = req.user;
   const avatar = req.file?.path || undefined;
   try {
@@ -105,6 +118,7 @@ const changeAvatar = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 const changeDefaultAvatar = async (req, res) => {
   const { _id } = req.user;
   const { avatar } = req.body;
@@ -123,26 +137,57 @@ const changeDefaultAvatar = async (req, res) => {
   }
 };
 
-const changeSettings = async (req, res) => {
+const changePassword = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
-  const {
-    // name,
-    password,
-    darkMode,
-    foundBy,
-    locationServices,
-    showEmail,
-    showName,
-  } = req.body;
+  const { password } = req.body;
   console.log(req.body);
   try {
     // send error if no or wrong file
-    console.log(avatar);
     const user = await User.findByIdAndUpdate(
       { _id },
       {
-        // adapt!!!!!!!!!!!!!!!!
-        $addToSet: { "settings.poi": { $each: poi } },
+        password: password,
+      },
+      { new: true, projection: { password: 0 } }
+    ).populate("friends.user", "userName avatar _id name");
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeName = async (req, res) => {
+  const { _id } = req.user; // get user._id from req (attached via auth)
+  const { name } = req.body;
+  console.log(req.body);
+  try {
+    // send error if no or wrong file
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        $set: { name: name },
+      },
+      { new: true, projection: { password: 0 } }
+    ).populate("friends.user", "userName avatar _id name");
+    console.log(user);
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const changeSettings = async (req, res) => {
+  const { _id } = req.user; // get user._id from req (attached via auth)
+  const { darkMode, foundBy, locationServices, showEmail, showName } = req.body;
+  console.log(req.body);
+  try {
+    // send error if no or wrong file
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        "settings.darkMode": darkMode,
         "settings.foundBy": foundBy,
         "settings.locationServices": locationServices,
         "settings.showEmail": showEmail,
@@ -335,7 +380,10 @@ const getChatMembers = async (req, res) => {
 module.exports = {
   loginUser,
   signUpUser,
+  deleteUser,
   changeAvatar,
+  changeName,
+  changePassword,
   changeDefaultAvatar,
   changeSettings,
   setInitialSettings,
