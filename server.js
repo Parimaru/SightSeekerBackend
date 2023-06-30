@@ -66,6 +66,7 @@ const io = require("socket.io")("https://sightseeker-backend.onrender.com", {
           "https://sightseeker.netlify.app",
         ],
         "Access-Control-Allow-Methods": ["GET", "POST"],
+        "Access-Control-Allow-Origin" : "*",
         "Access-Control-Allow-Private-Network": true,
         "Access-Control-Allow-Credentials": true
       });
