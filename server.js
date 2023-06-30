@@ -52,7 +52,7 @@ app.listen(PORT, () => {
 });
 
 // SOCKET.IO SETUP ///
-const io = require("socket.io")(`https://sightseeker-backend.onrender.com:${PORT}`, {
+const io = require("socket.io")(`https://sightseeker-backend.onrender.com`, {
   cors: {
     origin: [
       "http://localhost:3000",
