@@ -12,7 +12,6 @@ const loginUser = async (req, res) => {
 
   try {
     const user = await User.login(loginOne, password);
-
     //create tokens
     const token = createToken(user._id);
     // select only needed data
@@ -35,6 +34,21 @@ const loginUser = async (req, res) => {
       data: userWithoutPW,
       token,
     });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// retrieve user if valid stored token
+const retrieveUser = async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const user = await User.findOne({ _id })
+      .select("-password")
+      .populate("friends.user", "userName avatar _id name");
+
+    if (!user) return res.status(401).json({ error });
+    res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -333,6 +347,32 @@ const handleInvitation = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  const { userId } = req.params
+  try {
+    const user = await User.findById(userId)
+
+    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    else res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+const getChatMembers = async (req, res) => {
+  const {members} = req.body;
+  try {
+
+    const usersArray = members.map(user => {return { _id: user}})
+  
+    const usersFetched = await User.find({$or: [...usersArray]})
+    if (!usersFetched) return res.status(200).json({ msg: "No matching users found" })
+    else res.status(200).json({ data: usersFetched })
+  }
+   catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+}
 // Add chatroom
 
 // Get initial user settings / update user settings
@@ -350,4 +390,7 @@ module.exports = {
   findUsersByContact,
   inviteUserAsFriend,
   handleInvitation,
+  retrieveUser,
+  getUser,
+  getChatMembers,
 };
