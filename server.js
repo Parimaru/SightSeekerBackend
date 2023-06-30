@@ -10,6 +10,10 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+
 const whitelist = [
   "http://localhost:3000",
   "https://localhost:3000",
@@ -53,18 +57,31 @@ app.listen(PORT, () => {
 });
 
 // SOCKET.IO SETUP ///
-const io = require("socket.io")(`https://sightseeker-backend.onrender.com`, /* {
+// const io = require("socket.io")("http://localhost:8081", {
+//   cors: {
+//     origin: [
+//       "http://localhost:3000",
+//       "https://localhost:3000",
+//       "https://sightseeker.netlify.app",
+//     ],
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ["Access-Control-Allow-Origin"],
+//     credentials: true
+//   },
+// });
+
+const io = new Server(server, {
   cors: {
     origin: [
-      "http://localhost:3000",
-      "https://localhost:3000",
+      "http://localhost:8081/",
       "https://sightseeker.netlify.app",
     ],
     methods: ["GET", "POST"],
     allowedHeaders: ["Access-Control-Allow-Origin"],
     credentials: true
   },
-} */);
+});
+
 
 // handlePreflightRequest: (req, res) => {
 //   res.writeHead(200, {
