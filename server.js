@@ -50,7 +50,7 @@ app.listen(PORT, () => {
   console.log("Running".rainbow);
 });
 
-/// SOCKET.IO SETUP ///
+/ SOCKET.IO SETUP ///
 const io = require("socket.io")("https://sightseeker-backend.onrender.com", {
   cors: {
     origin: [
@@ -58,8 +58,34 @@ const io = require("socket.io")("https://sightseeker-backend.onrender.com", {
       "https://localhost:3000",
       "https://sightseeker.netlify.app",
     ],
+    handlePreflightRequest: (req, res) => {
+      res.writeHead(200, {
+        "Access-Control-Allow-Origin": [
+          "http://localhost:3000",
+          "https://localhost:3000",
+          "https://sightseeker.netlify.app",
+        ],
+        "Access-Control-Allow-Methods": ["GET", "POST"],
+        "Access-Control-Allow-Private-Network": true,
+        "Access-Control-Allow-Credentials": true
+      });
+      res.end();
+    }
   },
 });
+
+// const io = require("socket.io")("https://sightseeker-backend.onrender.com", {
+//   cors: {
+//     origin: [
+//       "http://localhost:3000",
+//       "https://localhost:3000",
+//       "https://sightseeker.netlify.app",
+//     ],
+//     methods: ["GET", "POST"],
+//     allowedHeaders: ["Access-Control-Allow-Private-Network", "true"],
+//     credentials: true
+//   }
+// });
 
 let activeUsers = [];
 
