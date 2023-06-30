@@ -4,52 +4,49 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./dbinit");
 const userRoutes = require("./routes/user");
-const chatRoutes = require("./routes/ChatRoute")
-const messageRoutes = require("./routes/MessageRoute")
+const chatRoutes = require("./routes/ChatRoute");
+const messageRoutes = require("./routes/MessageRoute");
 const PORT = process.env.PORT || 8080;
 
 /// SOCKET.IO SETUP ///
 const io = require("socket.io")(8081, {
   cors: {
-    origin: "http://localhost:3000"
-  }
-})
+    origin: "http://localhost:3000",
+  },
+});
 
-let activeUsers = []
+let activeUsers = [];
 
-io.on("connection", (socket)=> {
-
+io.on("connection", (socket) => {
   // add new user
   socket.on("new-user-add", (newUserId) => {
     // if user is not added already
-    if(!activeUsers.some((user) => user.userId === newUserId))
-    {
-        activeUsers.push({
-          userId: newUserId,
-          socketId: socket.id
-        })
+    if (!activeUsers.some((user) => user.userId === newUserId)) {
+      activeUsers.push({
+        userId: newUserId,
+        socketId: socket.id,
+      });
     }
-    io.emit("get-users", activeUsers)
-  })
+    io.emit("get-users", activeUsers);
+  });
 
   // sending messages
   socket.on("send-message", (data) => {
-    const { receiverId } = data
-    const user = activeUsers.find((user) => user.userId === receiverId)
-    console.log("sending from socket to :", user)
-    console.log("data", data)
+    const { receiverId } = data;
+    const user = activeUsers.find((user) => user.userId === receiverId);
+    console.log("sending from socket to :", user);
+    console.log("data", data);
     if (user) {
-      io.to(user.socketId).emit("receive-message", data)
+      io.to(user.socketId).emit("receive-message", data);
     }
-  })
+  });
 
   socket.on("disconnect", () => {
     activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
-    io.emit("get-users", activeUsers)
-  })
-
-})
-/////////////////////////////////////////////////////////////////
+    io.emit("get-users", activeUsers);
+  });
+});
+////////////////////////////////////////////////////////////////////////////////
 const app = express();
 
 const whitelist = ["http://localhost:3000", "https://sightseeker.netlify.app"];
@@ -80,9 +77,9 @@ app.get("/", cors(corsOptions), (req, res) => {
 
 app.use("/user", cors(corsOptions), userRoutes);
 
-app.use("/chat",cors(corsOptions), chatRoutes)
+app.use("/chat", cors(corsOptions), chatRoutes);
 
-app.use("/message",cors(corsOptions), messageRoutes)
+app.use("/message", cors(corsOptions), messageRoutes);
 
 app.listen(PORT, () => {
   console.log("Running".rainbow);
