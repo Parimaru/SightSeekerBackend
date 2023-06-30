@@ -28,7 +28,7 @@ const corsOptions = {
     }
   },
   allowedHeaders: ["Access-Control-Allow-Origin"],
-  credentials: true
+  credentials: true,
 };
 
 app.use(function setCommonHeaders(req, res, next) {
@@ -52,10 +52,6 @@ app.use("/chat", cors(corsOptions), chatRoutes);
 
 app.use("/message", cors(corsOptions), messageRoutes);
 
-app.listen(PORT, () => {
-  console.log("Running".rainbow);
-});
-
 // SOCKET.IO SETUP ///
 // const io = require("socket.io")("http://localhost:8081", {
 //   cors: {
@@ -72,16 +68,12 @@ app.listen(PORT, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: [
-      "http://localhost:8081/",
-      "https://sightseeker.netlify.app",
-    ],
+    origin: ["http://localhost:8081/", "https://sightseeker.netlify.app"],
     methods: ["GET", "POST"],
     allowedHeaders: ["Access-Control-Allow-Origin"],
-    credentials: true
+    transports: ["websocket"],
   },
 });
-
 
 // handlePreflightRequest: (req, res) => {
 //   res.writeHead(200, {
@@ -142,3 +134,7 @@ io.on("connection", (socket) => {
   });
 });
 /////////////////////////////////////////////////////////////////
+
+server.listen(PORT, () => {
+  console.log("Running".rainbow);
+});
