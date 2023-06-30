@@ -4,6 +4,9 @@ const uploadAvatar = require("../services/uploadAvatar");
 const {
   loginUser,
   signUpUser,
+  deleteUser,
+  changeName,
+  changePassword,
   changeSettings,
   changeAvatar,
   changeDefaultAvatar,
@@ -29,11 +32,17 @@ app.get("/retrieve", requireAuth, retrieveUser);
 // Update
 app.put("/settings", requireAuth, changeSettings);
 
+app.delete("/deleteUser", requireAuth, deleteUser);
+
 app.put("/avatar", requireAuth, uploadAvatar.single("avatar"), changeAvatar);
 
 app.put("/default_avatar", requireAuth, changeDefaultAvatar);
 // Add/Change Avatar
 app.put("/initalsettings", requireAuth, setInitialSettings);
+
+app.put("/changePassword", requireAuth, changePassword);
+
+app.put("/changeName", requireAuth, changeName);
 
 // Get all users by contact query  --> /user/find?search=
 app.get("/find", requireAuth, findUsersByContact);
