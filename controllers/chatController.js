@@ -40,6 +40,7 @@ const createNewChat = async (req, res) => {
 const userChats = async (req, res) => {
     try {
       const userId = req.params.userId;
+      console.log(userId)
   
       const chats = await chatModel.find({
         $or: [
@@ -49,7 +50,7 @@ const userChats = async (req, res) => {
       });
   
       res.status(200).json(chats);
-      console.log("chats", chats);
+    //   console.log("chats", chats);
     } catch (error) {
       res.status(500).json(error);
     }

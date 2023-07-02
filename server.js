@@ -62,7 +62,7 @@ app.use("/message", cors(corsOptions), messageRoutes);
 //     ],
 //     methods: ["GET", "POST"],
 //     allowedHeaders: ["Access-Control-Allow-Origin"],
-//     credentials: true
+//     transports: ["websocket"],
 //   },
 // });
 
@@ -120,14 +120,19 @@ io.on("connection", (socket) => {
 
   // sending messages
   socket.on("send-message", (data) => {
+    console.log("active users", activeUsers);
     const { receiverId } = data;
-    const user = activeUsers.find((user) => user.userId === receiverId);
-    console.log("sending from socket to :", user);
-    console.log("receiverId", receiverId)
+    console.log("receiverId", receiverId);
     console.log("data", data);
-    if (user) {
+    
+    // Find all users whose userId is in the receiverId array
+    const users = activeUsers.filter((user) => receiverId.includes(user.userId));
+    console.log("sending from socket to users:", users);
+    
+    // Emit the message to each user
+    users.forEach((user) => {
       io.to(user.socketId).emit("receive-message", data);
-    }
+    });
   });
 
   socket.on("disconnect", () => {
