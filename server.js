@@ -112,6 +112,7 @@ io.on("connection", (socket) => {
       activeUsers.push({
         userId: newUserId,
         socketId: socket.id,
+        online: newUserId ? true : false
       });
     }
     io.emit("get-users", activeUsers);
@@ -122,6 +123,7 @@ io.on("connection", (socket) => {
     const { receiverId } = data;
     const user = activeUsers.find((user) => user.userId === receiverId);
     console.log("sending from socket to :", user);
+    console.log("receiverId", receiverId)
     console.log("data", data);
     if (user) {
       io.to(user.socketId).emit("receive-message", data);
