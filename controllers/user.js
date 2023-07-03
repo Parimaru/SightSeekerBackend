@@ -348,34 +348,53 @@ const handleInvitation = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const { userId } = req.params
+  const { userId } = req.params;
   try {
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 
 const getChatMembers = async (req, res) => {
-  const {members} = req.body;
+  const { members } = req.body;
   try {
+    const usersArray = members.map((user) => {
+      return { _id: user };
+    });
 
-    const usersArray = members.map(user => {return { _id: user}})
-  
-    const usersFetched = await User.find({$or: [...usersArray]})
-    if (!usersFetched) return res.status(200).json({ msg: "No matching users found" })
-    else res.status(200).json({ data: usersFetched })
+    const usersFetched = await User.find({ $or: [...usersArray] });
+    if (!usersFetched)
+      return res.status(200).json({ msg: "No matching users found" });
+    else res.status(200).json({ data: usersFetched });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-   catch (error) {
-    res.status(400).json({ error: error.message })
+};
+
+const addFavorite = async (req, res) => {
+  const { _id } = req.user;
+  const { favorite } = req.body;
+  console.log(_id, favorite);
+  try {
+    const user = await User.findByIdAndUpdate(
+      _id,
+      {
+        $addToSet: { favorites: favorite },
+      },
+      { new: true, projection: { password: 0 } }
+    ).populate("friends.user", "userName avatar _id name");
+    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    else res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-}
+};
+
 // Add chatroom
-
-// Get initial user settings / update user settings
 
 module.exports = {
   loginUser,
@@ -393,4 +412,5 @@ module.exports = {
   retrieveUser,
   getUser,
   getChatMembers,
+  addFavorite,
 };

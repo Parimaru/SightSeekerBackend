@@ -17,6 +17,7 @@ const {
   retrieveUser,
   getUser,
   getChatMembers,
+  addFavorite,
 } = require("../controllers/user");
 
 const app = express.Router();
@@ -53,8 +54,11 @@ app.put("/invite/:invitedUserId", requireAuth, inviteUserAsFriend);
 // Handle invitation / accept or reject / delete friend
 app.put("/answer-invitation", requireAuth, handleInvitation);
 
-app.get("/:userId", getUser)
-app.post("/chatmembers", getChatMembers)
+app.get("/:userId", getUser);
+app.post("/chatmembers", getChatMembers);
+
+// add favorite point (bookmark)
+app.put("/add-favorite", requireAuth, addFavorite);
 
 module.exports = app;
 
