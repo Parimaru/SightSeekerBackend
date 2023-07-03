@@ -1,31 +1,12 @@
 const mongoose = require("mongoose");
 
-const pointSchema = new mongoose.Schema({
-  name: String,
-  coordinates: {
-    lat: Number,
-    lng: Number,
-  },
-  // votes: {
-  //   user: { type: mongoose.Types.ObjectId, ref: "User" },
-  //   up: Number,
-  //   down: Number,
-  // },
-  pointTypes: [String],
-});
-
 const travelPlanSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
     },
-    members: [
-      {
-        user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        accepted: { type: Boolean, default: false },
-      },
-    ],
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     creator: {
       type: mongoose.Types.ObjectId,
       ref: "User",
@@ -36,7 +17,10 @@ const travelPlanSchema = new mongoose.Schema(
     },
     // savedRoutes: [{}],
     // votedRoute: {},
-    selectedPoints: [pointSchema],
+    selectedPoints: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SelectedPoints",
+    },
     active: { type: Boolean, default: false },
   },
   { timestamps: true }

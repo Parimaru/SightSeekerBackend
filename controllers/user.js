@@ -47,7 +47,7 @@ const retrieveUser = async (req, res) => {
       .select("-password")
       .populate("friends.user", "userName avatar _id name");
 
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -93,7 +93,7 @@ const deleteUser = async (req, res) => {
   try {
     // send error if no or wrong file
     const user = await User.deleteOne({ _id });
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ msg: `Deleted user with id ${_id}` });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -112,7 +112,7 @@ const changeAvatar = async (req, res) => {
       },
       { new: true, upsert: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -130,7 +130,7 @@ const changeDefaultAvatar = async (req, res) => {
       },
       { new: true, upsert: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name"); // send default avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -150,7 +150,7 @@ const changePassword = async (req, res) => {
       },
       { new: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name");
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -171,7 +171,7 @@ const changeName = async (req, res) => {
       { new: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name");
     console.log(user);
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -195,7 +195,7 @@ const changeSettings = async (req, res) => {
       },
       { new: true, upsert: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -218,7 +218,7 @@ const setInitialSettings = async (req, res) => {
       },
       { new: true, upsert: true, projection: { password: 0 } }
     ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
 
     res.status(201).json({ data: user });
   } catch (error) {

@@ -10,13 +10,6 @@ const location = new mongoose.Schema({
   },
 });
 
-const favorites = new mongoose.Schema({
-  name: { type: String },
-  address: String,
-  coords: [Number],
-  preference: { type: [String] },
-});
-
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   userName: { type: String, required: true, unique: true },
@@ -27,7 +20,7 @@ const userSchema = new mongoose.Schema({
   },
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  favorites: { type: [favorites] },
+  favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Point" }],
   currentLocation: { type: location },
   friends: [
     {
