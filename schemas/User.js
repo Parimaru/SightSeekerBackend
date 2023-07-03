@@ -12,11 +12,9 @@ const location = new mongoose.Schema({
 
 const favorites = new mongoose.Schema({
   name: { type: String },
-  coordinates: {
-    lat: Number,
-    lng: Number,
-  },
-  pointTypes: { type: [String] },
+  address: String,
+  coords: [Number],
+  preference: { type: [String] },
 });
 
 const userSchema = new mongoose.Schema({

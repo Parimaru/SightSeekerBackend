@@ -68,39 +68,16 @@ app.use("/message", cors(corsOptions), messageRoutes);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:8081/", "https://sightseeker.netlify.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://localhost:3000",
+      "https://sightseeker.netlify.app",
+    ],
     methods: ["GET", "POST"],
     allowedHeaders: ["Access-Control-Allow-Origin"],
     transports: ["websocket"],
   },
 });
-
-// handlePreflightRequest: (req, res) => {
-//   res.writeHead(200, {
-//     "Access-Control-Allow-Origin": [
-//       "http://localhost:3000",
-//       "https://localhost:3000",
-//       "https://sightseeker.netlify.app",
-//     ],
-//     "Access-Control-Allow-Methods": ["GET", "POST"],
-//     "Access-Control-Allow-Private-Network": true,
-//     "Access-Control-Allow-Credentials": true
-//   });
-//   res.end();
-// }
-
-// const io = require("socket.io")("https://sightseeker-backend.onrender.com", {
-//   cors: {
-//     origin: [
-//       "http://localhost:3000",
-//       "https://localhost:3000",
-//       "https://sightseeker.netlify.app",
-//     ],
-//     methods: ["GET", "POST"],
-//     allowedHeaders: ["Access-Control-Allow-Private-Network", "true"],
-//     credentials: true
-//   }
-// });
 
 let activeUsers = [];
 
