@@ -22,16 +22,39 @@ const createNewChat = async (req, res) => {
     }
 }
 
+// const userChats = async (req, res) => {
+//     try {
+//       const chats = await chatModel.find({
+//         $or: [
+//           { members: { $elemMatch: { $in: [req.params.userId] } } },
+//           { members: { $elemMatch: { $in: [req.params.userId] } } }
+//         ]
+//       });
+//       res.status(200).json(chats);
+//       console.log("chats", chats);
+//     } catch (error) {
+//       res.status(500).json(error);
+//     }
+//   };
+
 const userChats = async (req, res) => {
     try {
-        const chat = await chatModel.find({
-            members: {$in: [req.params.userId]}
-        })
-        res.status(200).json(chat)
+      const userId = req.params.userId;
+      console.log(userId)
+  
+      const chats = await chatModel.find({
+        $or: [
+          { members: { $elemMatch: { $in: [userId] } } },
+          { members: { $elemMatch: { $elemMatch: { $in: [userId] } } } },
+        ],
+      });
+  
+      res.status(200).json(chats);
+    //   console.log("chats", chats);
     } catch (error) {
-        res.status(500).json(error)
+      res.status(500).json(error);
     }
-}
+};
 
 const findChat = async (req, res) => {
     try {
