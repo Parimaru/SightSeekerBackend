@@ -58,7 +58,7 @@ app.get("/:userId", getUser);
 app.post("/chatmembers", getChatMembers);
 
 // add favorite point (bookmark)
-app.put("/add-favorite", requireAuth, addFavorite);
+// app.put("/add-favorite", requireAuth, addFavorite);
 
 module.exports = app;
 

@@ -13,8 +13,8 @@ app.post("/new", requireAuth, createTravelplan);
 
 app.put("/:travelplanID", requireAuth, editTravelplan);
 
-app.get("/:travelplanID", requireAuth, getTravelplan);
+// app.get("/:travelplanID", requireAuth, getTravelplan);
 
-app.delete("/delete/:travelplanID", requireAuth, deleteTravelplan);
+app.delete("/", requireAuth, deleteTravelplan);
 
 module.exports = app;

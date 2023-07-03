@@ -380,7 +380,7 @@ const addFavorite = async (req, res) => {
   const { favorite } = req.body;
   console.log(_id, favorite);
   try {
-    const user = await User.findByIdAndUpdate(
+    const user = await Point.findByIdAndUpdate(
       _id,
       {
         $addToSet: { favorites: favorite },

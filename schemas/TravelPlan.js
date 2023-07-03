@@ -17,10 +17,12 @@ const travelPlanSchema = new mongoose.Schema(
     },
     // savedRoutes: [{}],
     // votedRoute: {},
-    selectedPoints: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SelectedPoints",
-    },
+    selectedPoints: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "SelectedPoints",
+      },
+    ],
     active: { type: Boolean, default: false },
   },
   { timestamps: true }
