@@ -4,8 +4,10 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./dbinit");
 const userRoutes = require("./routes/user");
+const travelplanRoutes = require("./routes/TravelRoute");
 const chatRoutes = require("./routes/ChatRoute");
 const messageRoutes = require("./routes/MessageRoute");
+const pointsRoutes = require("./routes/PointsRoute");
 const PORT = process.env.PORT || 8080;
 
 const app = express();
@@ -48,9 +50,13 @@ app.get("/", cors(corsOptions), (req, res) => {
 
 app.use("/user", cors(corsOptions), userRoutes);
 
+app.use("/travelplan", cors(corsOptions), travelplanRoutes);
+
 app.use("/chat", cors(corsOptions), chatRoutes);
 
 app.use("/message", cors(corsOptions), messageRoutes);
+
+app.use("/point", cors(corsOptions), pointsRoutes);
 
 // SOCKET.IO SETUP ///
 // const io = require("socket.io")("http://localhost:8081", {
