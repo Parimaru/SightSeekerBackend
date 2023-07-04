@@ -33,7 +33,7 @@ const createTravelplan = async (req, res) => {
 };
 
 const editTravelplan = async (req, res) => {
-  const { _id, name, startDate, endDate, members, selectedPoints } = req.body;
+  const { _id, name, startDate, endDate, members } = req.body;
   try {
     const travelplan = await TravelPlan.findByIdAndUpdate(
       { _id },
@@ -42,7 +42,6 @@ const editTravelplan = async (req, res) => {
         "dates.startDate": startDate,
         "dates.endDate": endDate,
         $addToSet: { members: { $each: members } },
-        $addToSet: { selectedPoints: { $each: selectedPoints } },
       },
       { new: true }
     );
@@ -54,17 +53,18 @@ const editTravelplan = async (req, res) => {
   }
 };
 
-// const getTravelplan = async () => {
-//   const { _id } = req.body;
-//   try {
-//     const travelplan = await Travelplan.findOne({ _id });
-//     if (!travelplan)
-//       return res.status(401).json({ msg: "No travelplan found." });
-//     res.status(200).jason({ data: travelplan });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
+const getTravelplan = async (req, res) => {
+  const { _id } = req.params;
+  console.log(_id);
+  try {
+    const travelplan = await TravelPlan.findOne({ _id });
+    if (!travelplan)
+      return res.status(401).json({ msg: "No travelplan found." });
+    res.status(200).json({ data: travelplan });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 const deleteTravelplan = async (req, res) => {
   const { _id } = req.body;
@@ -95,5 +95,5 @@ module.exports = {
   createTravelplan,
   editTravelplan,
   deleteTravelplan,
-  // getTravelplan,
+  getTravelplan,
 };

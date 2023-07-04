@@ -102,7 +102,10 @@ userSchema.statics.login = async function (loginOne, password) {
 
   const user = await this.findOne({
     $or: [{ email: loginOne }, { userName: loginOne }],
-  }).populate("friends.user", "userName avatar _id name"); // in field friends: get only _id, userName and avatar
+  })
+    .populate({ path: "friends.user", select: "avatar name userName" })
+    .populate({ path: "favorites" })
+    .populate({ path: "travelPlans" }); // in field friends: get only _id, userName and avatar
 
   if (!user) {
     throw Error("Incorrect email or user name");
