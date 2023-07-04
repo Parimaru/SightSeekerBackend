@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
   settings: {
     darkMode: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     poi: {
       type: [String],

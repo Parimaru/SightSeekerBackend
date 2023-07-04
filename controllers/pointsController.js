@@ -11,7 +11,7 @@ const createPoint = async (req, res) => {
       pointTypes,
     });
     if (!point) return res.status(401).json({ msg: "No point found." });
-
+    await point.save();
     const { _id } = req.user;
     const user = await User.findByIdAndUpdate(
       { _id },
@@ -20,8 +20,9 @@ const createPoint = async (req, res) => {
       },
       { new: true, projection: { password: 0 } }
     )
-      .populate("friends.user", "userName avatar _id name")
-      .populate("favorites", "name coordinates address pointTypes");
+      .populate({ path: "friends.user", select: "-password" })
+      .populate("favorites")
+      .populate("travelPlans");
 
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
@@ -63,9 +64,7 @@ const deletePoint = async (req, res) => {
         $pull: { favorites: _id },
       },
       { new: true, projection: { password: 0 } }
-    )
-      .populate("friends.user", "userName avatar _id name")
-      .populate("favorites", "name coordinates address pointTypes");
+    ).populate(["friends.user", "favorites", "travelPlans"]);
 
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else
