@@ -27,7 +27,7 @@ const deleteChat = async (req, res) => {
     const { _id } = req.body
     try {
         const chatToDelete = await chatModel.deleteOne({ _id })
-        // const messagesToDelete =  ;
+        const messagesToDelete = await messageModel.deleteMany( { chatId: _id } );
         if (!chatToDelete) return res.status(401).json({ error })
         res.status(200).json({ msg: `Chat successfully deleted` })
     } catch (error) {
@@ -38,17 +38,13 @@ const deleteChat = async (req, res) => {
 const userChats = async (req, res) => {
     try {
       const userId = req.params.userId;
-    //   console.log(userId)
-  
       const chats = await chatModel.find({
         $or: [
           { members: { $elemMatch: { $in: [userId] } } },
           { members: { $elemMatch: { $elemMatch: { $in: [userId] } } } },
         ],
       });
-  
       res.status(200).json(chats);
-    //   console.log("chats", chats);
     } catch (error) {
       res.status(500).json(error);
     }
