@@ -43,11 +43,13 @@ const loginUser = async (req, res) => {
 const retrieveUser = async (req, res) => {
   const { _id } = req.user;
   try {
+    console.log("RETRIEVE USER FIRE UP");
     const user = await User.findOne({ _id })
-      .select("-password")
-      .populate("friends.user", "userName avatar _id name");
+      .populate({ path: "friends", select: "-password" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
 
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -91,9 +93,8 @@ const signUpUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   const { _id } = req.user;
   try {
-    // send error if no or wrong file
     const user = await User.deleteOne({ _id });
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ msg: `Deleted user with id ${_id}` });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -111,8 +112,8 @@ const changeAvatar = async (req, res) => {
         avatar,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    ).populate(["friends.user", "favorites", "travelPlans"]);
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -129,8 +130,8 @@ const changeDefaultAvatar = async (req, res) => {
         avatar,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name"); // send default avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    ).populate(["friends.user", "favorites", "travelPlans"]);
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -142,15 +143,14 @@ const changePassword = async (req, res) => {
   const { password } = req.body;
   console.log(req.body);
   try {
-    // send error if no or wrong file
     const user = await User.findByIdAndUpdate(
       { _id },
       {
         password: password,
       },
       { new: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name");
-    if (!user) return res.status(401).json({ error });
+    ).populate(["friends.user", "favorites", "travelPlans"]);
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -162,16 +162,15 @@ const changeName = async (req, res) => {
   const { name } = req.body;
   console.log(req.body);
   try {
-    // send error if no or wrong file
     const user = await User.findByIdAndUpdate(
       { _id },
       {
         $set: { name: name },
       },
       { new: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name");
+    ).populate(["friends.user", "favorites", "travelPlans"]);
     console.log(user);
-    if (!user) return res.status(401).json({ error });
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -183,7 +182,6 @@ const changeSettings = async (req, res) => {
   const { darkMode, foundBy, locationServices, showEmail, showName } = req.body;
   console.log(req.body);
   try {
-    // send error if no or wrong file
     const user = await User.findByIdAndUpdate(
       { _id },
       {
@@ -194,8 +192,8 @@ const changeSettings = async (req, res) => {
         "settings.showName": showName,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    ).populate(["friends.user", "favorites", "travelPlans"]);
+    if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -217,8 +215,8 @@ const setInitialSettings = async (req, res) => {
         "settings.showName": showName,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name"); // send new avatar image url to database, replace existing
-    if (!user) return res.status(401).json({ error });
+    ).populate(["friends.user", "favorites", "travelPlans"]);
+    if (!user) return res.status(401).json({ msg: "No user found." });
 
     res.status(201).json({ data: user });
   } catch (error) {
@@ -284,7 +282,7 @@ const inviteUserAsFriend = async (req, res) => {
       { _id },
       { $addToSet: { friends: { user: invitedUser._id } } },
       { new: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name");
+    ).populate(["friends.user", "favorites", "travelPlans"]);
     if (!invitedUser || !user)
       return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
@@ -319,7 +317,7 @@ const handleInvitation = async (req, res) => {
         { _id, "friends.user": invitingUserId },
         { $set: { "friends.$.accepted": true, "friends.$.received": false } },
         { new: true, projection: { password: 0 } }
-      ).populate("friends.user", "userName avatar _id name");
+      ).populate(["friends.user", "favorites", "travelPlans"]);
 
       if (!invitingUser || !user)
         return res.status(200).json({ msg: "No matching user found" });
@@ -334,7 +332,7 @@ const handleInvitation = async (req, res) => {
         { _id },
         { $pull: { friends: { user: invitingUserId } } },
         { new: true, projection: { password: 0 } }
-      ).populate("friends.user", "userName avatar _id name");
+      ).populate(["friends.user", "favorites", "travelPlans"]);
       if (!invitingUser || !user)
         return res.status(200).json({ msg: "No matching user found" });
       return res.status(200).json({ data: user });
@@ -380,13 +378,13 @@ const addFavorite = async (req, res) => {
   const { favorite } = req.body;
   console.log(_id, favorite);
   try {
-    const user = await User.findByIdAndUpdate(
+    const user = await Point.findByIdAndUpdate(
       _id,
       {
         $addToSet: { favorites: favorite },
       },
       { new: true, projection: { password: 0 } }
-    ).populate("friends.user", "userName avatar _id name");
+    ).populate(["friends.user", "favorites", "travelPlans"]);
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
   } catch (error) {
