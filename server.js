@@ -48,7 +48,7 @@ app.get("/", cors(corsOptions), (req, res) => {
 
 app.use("/user", cors(corsOptions), userRoutes);
 
-app.use("/chat", cors(corsOptions), chatRoutes);
+app.use("/", cors(corsOptions), chatRoutes);
 
 app.use("/message", cors(corsOptions), messageRoutes);
 
@@ -97,14 +97,14 @@ io.on("connection", (socket) => {
 
   // sending messages
   socket.on("send-message", (data) => {
-    console.log("active users", activeUsers);
+    // console.log("active users", activeUsers);
     const { receiverId } = data;
-    console.log("receiverId", receiverId);
-    console.log("data", data);
+    // console.log("receiverId", receiverId);
+    // console.log("data", data);
     
     // Find all users whose userId is in the receiverId array
     const users = activeUsers.filter((user) => receiverId.includes(user.userId));
-    console.log("sending from socket to users:", users);
+    // console.log("sending from socket to users:", users);
     
     // Emit the message to each user
     users.forEach((user) => {
