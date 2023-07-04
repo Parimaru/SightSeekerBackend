@@ -376,7 +376,7 @@ const getChatMembers = async (req, res) => {
 const addFavorite = async (req, res) => {
   const { _id } = req.user;
   const { favorite } = req.body;
-  console.log(_id, favorite);
+  // console.log(_id, favorite);
   try {
     const user = await Point.findByIdAndUpdate(
       _id,

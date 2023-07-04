@@ -2,13 +2,13 @@ const Point = require("../schemas/Point");
 const User = require("../schemas/User");
 
 const createPoint = async (req, res) => {
-  const { name, coordinates, address, pointTypes } = req.body;
+  const { name, coords, address, preference } = req.body;
   try {
     const point = await Point.create({
       name,
-      coordinates,
+      coords,
       address,
-      pointTypes,
+      preference,
     });
     if (!point) return res.status(401).json({ msg: "No point found." });
     await point.save();
@@ -18,7 +18,7 @@ const createPoint = async (req, res) => {
       {
         $addToSet: { favorites: point._id },
       },
-      { new: true, projection: { password: 0 } }
+      { new: true, upsert: true, projection: { password: 0 } }
     )
       .populate({ path: "friends.user", select: "-password" })
       .populate("favorites")
@@ -32,15 +32,15 @@ const createPoint = async (req, res) => {
 };
 
 const editPoint = async (req, res) => {
-  const { _id, name, coordinates, address, pointTypes } = req.body;
+  const { _id, name, coords, address, preference } = req.body;
   try {
     const point = await Point.findByIdAndUpdate(
       { _id },
       {
         name,
-        coordinates,
+        coords,
         address,
-        $addToSet: { pointTypes: { $each: pointTypes } },
+        $addToSet: { preference: { $each: preference } },
       },
       { new: true }
     );
@@ -95,10 +95,24 @@ const deletePoint = async (req, res) => {
 //   }
 // };
 
+const getMultiplePoints = async (req, res) => {
+  const { ids } = req.body;
+  const idArray = ids.map((id) => {
+    return { _id: id };
+  });
+  try {
+    const points = await Point.find({ $or: [...idArray] });
+    if (!points) return res.status(401).json({ msg: "No point found." });
+    res.status(200).json({ data: points });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createPoint,
   editPoint,
-  deletePoint,
+  deletePoint,getMultiplePoints
   //   getPoint,
   //   getAllPoints,
 };
