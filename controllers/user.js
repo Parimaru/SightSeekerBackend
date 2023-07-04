@@ -43,9 +43,8 @@ const loginUser = async (req, res) => {
 const retrieveUser = async (req, res) => {
   const { _id } = req.user;
   try {
-    console.log("RETRIEVE USER FIRE UP");
     const user = await User.findOne({ _id })
-      .populate({ path: "friends", select: "-password" })
+      .populate({ path: "friends.user", select: "avatar name userName" })
       .populate({ path: "favorites" })
       .populate({ path: "travelPlans" });
 
@@ -63,7 +62,6 @@ const signUpUser = async (req, res) => {
     // console.log("in the trycatch: ", email, password, userName, name);
 
     const user = await User.signup(email, password, userName, name);
-    console.log(user);
     //create token
     const token = createToken(user._id);
 
@@ -102,7 +100,6 @@ const deleteUser = async (req, res) => {
 };
 
 const changeAvatar = async (req, res) => {
-  console.log(req.user);
   const { _id } = req.user;
   const avatar = req.file?.path || undefined;
   try {
@@ -112,7 +109,10 @@ const changeAvatar = async (req, res) => {
         avatar,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
@@ -130,7 +130,10 @@ const changeDefaultAvatar = async (req, res) => {
         avatar,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
@@ -141,7 +144,6 @@ const changeDefaultAvatar = async (req, res) => {
 const changePassword = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
   const { password } = req.body;
-  console.log(req.body);
   try {
     const user = await User.findByIdAndUpdate(
       { _id },
@@ -149,7 +151,10 @@ const changePassword = async (req, res) => {
         password: password,
       },
       { new: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
@@ -160,7 +165,6 @@ const changePassword = async (req, res) => {
 const changeName = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
   const { name } = req.body;
-  console.log(req.body);
   try {
     const user = await User.findByIdAndUpdate(
       { _id },
@@ -168,8 +172,10 @@ const changeName = async (req, res) => {
         $set: { name: name },
       },
       { new: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
-    console.log(user);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
@@ -180,7 +186,6 @@ const changeName = async (req, res) => {
 const changeSettings = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
   const { darkMode, foundBy, locationServices, showEmail, showName } = req.body;
-  console.log(req.body);
   try {
     const user = await User.findByIdAndUpdate(
       { _id },
@@ -192,7 +197,10 @@ const changeSettings = async (req, res) => {
         "settings.showName": showName,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
     res.status(201).json({ data: user });
   } catch (error) {
@@ -203,7 +211,6 @@ const changeSettings = async (req, res) => {
 const setInitialSettings = async (req, res) => {
   const { _id } = req.user; // get user._id from req (attached via auth)
   const { poi, foundBy, locationServices, showEmail, showName } = req.body;
-  console.log(req.body);
   try {
     const user = await User.findByIdAndUpdate(
       { _id },
@@ -215,7 +222,10 @@ const setInitialSettings = async (req, res) => {
         "settings.showName": showName,
       },
       { new: true, upsert: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(401).json({ msg: "No user found." });
 
     res.status(201).json({ data: user });
@@ -282,7 +292,10 @@ const inviteUserAsFriend = async (req, res) => {
       { _id },
       { $addToSet: { friends: { user: invitedUser._id } } },
       { new: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!invitedUser || !user)
       return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
@@ -317,7 +330,10 @@ const handleInvitation = async (req, res) => {
         { _id, "friends.user": invitingUserId },
         { $set: { "friends.$.accepted": true, "friends.$.received": false } },
         { new: true, projection: { password: 0 } }
-      ).populate(["friends.user", "favorites", "travelPlans"]);
+      )
+        .populate({ path: "friends.user", select: "avatar name userName" })
+        .populate({ path: "favorites" })
+        .populate({ path: "travelPlans" });
 
       if (!invitingUser || !user)
         return res.status(200).json({ msg: "No matching user found" });
@@ -332,7 +348,10 @@ const handleInvitation = async (req, res) => {
         { _id },
         { $pull: { friends: { user: invitingUserId } } },
         { new: true, projection: { password: 0 } }
-      ).populate(["friends.user", "favorites", "travelPlans"]);
+      )
+        .populate({ path: "friends.user", select: "avatar name userName" })
+        .populate({ path: "favorites" })
+        .populate({ path: "travelPlans" });
       if (!invitingUser || !user)
         return res.status(200).json({ msg: "No matching user found" });
       return res.status(200).json({ data: user });
@@ -376,7 +395,6 @@ const getChatMembers = async (req, res) => {
 const addFavorite = async (req, res) => {
   const { _id } = req.user;
   const { favorite } = req.body;
-  // console.log(_id, favorite);
   try {
     const user = await Point.findByIdAndUpdate(
       _id,
@@ -384,7 +402,10 @@ const addFavorite = async (req, res) => {
         $addToSet: { favorites: favorite },
       },
       { new: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
   } catch (error) {

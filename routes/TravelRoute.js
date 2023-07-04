@@ -11,9 +11,9 @@ const app = express.Router();
 
 app.post("/new", requireAuth, createTravelplan);
 
-app.put("/:travelplanID", requireAuth, editTravelplan);
+app.put("/edit/:_id", requireAuth, editTravelplan);
 
-// app.get("/:travelplanID", requireAuth, getTravelplan);
+app.get("/:_id", requireAuth, getTravelplan);
 
 app.delete("/", requireAuth, deleteTravelplan);
 
