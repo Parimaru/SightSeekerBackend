@@ -20,7 +20,7 @@ const travelPlanSchema = new mongoose.Schema(
     selectedPoints: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "SelectedPoints",
+        ref: "Point",
       },
     ],
     active: { type: Boolean, default: false },

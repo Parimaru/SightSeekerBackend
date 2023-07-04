@@ -10,11 +10,10 @@ const createTravelplan = async (req, res) => {
       "dates.startDate": startDate,
       "dates.endDate": endDate,
       creator,
-      $addToSet: { members: { $each: members } },
-      $addToSet: { selectedPoints: { $each: selectedPoints } },
+      members,
+      selectedPoints,
     });
-    if (!travelplan)
-      return res.status(401).json({ msg: "Could not create travelplan." });
+    await travelplan.save();
     const { _id: userID } = req.user;
     const user = await User.findByIdAndUpdate(
       { _id: userID },
@@ -23,13 +22,9 @@ const createTravelplan = async (req, res) => {
       },
       { new: true, projection: { password: 0 } }
     )
-      .populate("friends.user", "userName avatar _id name")
-      .populate("favorites", "name coordinates address pointTypes")
-      .populate("travelPlans.members", "name avatar")
-      .populate(
-        "travelPlans",
-        "name dates.startDate dates.endDate creator members selectedPoints"
-      );
+      .populate(["friends.user", "favorites", "travelPlans"])
+      .exec();
+    console.log("######USER#########", user.travelPlans[0].members);
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     else res.status(200).json({ data: user });
   } catch (error) {
@@ -86,14 +81,7 @@ const deleteTravelplan = async (req, res) => {
         $pull: { travelPlans: _id },
       },
       { new: true, projection: { password: 0 } }
-    )
-      .populate("friends.user", "userName avatar _id name")
-      .populate("favorites", "name coordinates address pointTypes")
-      .populate("travelPlans.members", "name avatar")
-      .populate(
-        "travelPlans",
-        "name dates.startDate dates.endDate creator members selectedPoints"
-      );
+    ).populate(["friends.user", "favorites", "travelPlans"]);
     if (!user) return res.status(200).json({ msg: "No matching user found" });
     res
       .status(200)
