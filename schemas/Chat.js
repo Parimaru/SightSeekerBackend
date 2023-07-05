@@ -18,6 +18,9 @@ const mongoose = require("mongoose");
 
 
 const chatSchema = new mongoose.Schema({
+  chatName: {
+    type: String
+  },
   members: {
     type: Array,
   },

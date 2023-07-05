@@ -79,7 +79,7 @@ const io = new Server(server, {
       "https://localhost:3000",
       "https://sightseeker.netlify.app",
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "DELETE"],
     allowedHeaders: ["Access-Control-Allow-Origin"],
     transports: ["websocket"],
   },
