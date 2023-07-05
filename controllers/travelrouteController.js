@@ -91,9 +91,33 @@ const deleteTravelplan = async (req, res) => {
   }
 };
 
+const saveTravelplanPoints = async (req, res) => {
+  const { _id } = req.params;
+  const { points } = req.body;
+  // console.log("points: ", points);
+  try {
+    const travelplan = await TravelPlan.findByIdAndUpdate(_id, {
+      $set: { selectedPoints: [...points] },
+    });
+    // console.log(travelplan);
+    if (!travelplan)
+      return res.status(401).json({ msg: "No travelplan found." });
+    const { _id: userID } = req.user;
+    const user = await User.findById({ _id: userID })
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
+    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 module.exports = {
   createTravelplan,
   editTravelplan,
   deleteTravelplan,
   getTravelplan,
+  saveTravelplanPoints,
 };
