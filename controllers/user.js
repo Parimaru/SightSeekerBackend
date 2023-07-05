@@ -392,6 +392,52 @@ const getChatMembers = async (req, res) => {
   }
 };
 
+const addPOIFilter = async (req, res) => {
+  const { _id } = req.user;
+  const { filterPOI } = req.body;
+  console.log(filterPOI);
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        $addToSet: { "settings.poi": filterPOI },
+      },
+      { new: true, projection: { password: 0 } }
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
+    console.log("success");
+    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    else res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const deletePOIFilter = async (req, res) => {
+  const { _id } = req.user;
+  const { filter } = req.body;
+  console.log(filter);
+  try {
+    const user = await User.findByIdAndUpdate(
+      { _id },
+      {
+        $pull: { "settings.poi": filter },
+      },
+      { returnOriginal: false, projection: { password: 0 } }
+    )
+      .populate({ path: "friends.user", select: "avatar name userName" })
+      .populate({ path: "favorites" })
+      .populate({ path: "travelPlans" });
+    console.log("success");
+    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    else res.status(200).json({ data: user });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const addFavorite = async (req, res) => {
   const { _id } = req.user;
   const { favorite } = req.body;
@@ -427,6 +473,8 @@ module.exports = {
   setInitialSettings,
   findUsersByContact,
   inviteUserAsFriend,
+  addPOIFilter,
+  deletePOIFilter,
   handleInvitation,
   retrieveUser,
   getUser,

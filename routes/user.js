@@ -17,6 +17,8 @@ const {
   retrieveUser,
   getUser,
   getChatMembers,
+  addPOIFilter,
+  deletePOIFilter,
   addFavorite,
 } = require("../controllers/user");
 
@@ -59,6 +61,10 @@ app.post("/chatmembers", getChatMembers);
 
 // add favorite point (bookmark)
 // app.put("/add-favorite", requireAuth, addFavorite);
+
+app.put("/addPOI", requireAuth, addPOIFilter);
+
+app.put("/deletePOI", requireAuth, deletePOIFilter);
 
 module.exports = app;
 

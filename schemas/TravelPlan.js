@@ -7,10 +7,10 @@ const travelPlanSchema = new mongoose.Schema(
       required: true,
     },
     members: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    creator: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-    },
+    // creator: {
+    //   type: mongoose.Types.ObjectId,
+    //   ref: "User",
+    // },
     dates: {
       startDate: Date,
       endDate: Date,
