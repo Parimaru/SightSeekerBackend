@@ -5,6 +5,7 @@ const {
   deletePoint,
   editPoint,
   getMultiplePoints,
+  createSinglePoint,
   // getPoint,
   // getAllPoints,
 } = require("../controllers/pointsController");
@@ -15,6 +16,7 @@ app.post("/", requireAuth, createPoint);
 app.put("/", requireAuth, editPoint);
 app.delete("/", requireAuth, deletePoint);
 app.post("/getMultiplePoints", requireAuth, getMultiplePoints);
+app.post("/single", createSinglePoint);
 // app.get("/:pointId", requireAuth, getPoint);
 // app.get("/", requireAuth, getAllPoints);
 

@@ -31,6 +31,23 @@ const createPoint = async (req, res) => {
   }
 };
 
+const createSinglePoint = async (req, res) => {
+  const { name, coords, address, preference } = req.body;
+  try {
+    const point = await Point.create({
+      name,
+      coords,
+      address,
+      preference,
+    });
+    if (!point) return res.status(401).json({ msg: "No point found." });
+    await point.save();
+    res.status(200).json({ data: point });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 const editPoint = async (req, res) => {
   const { _id, name, coords, address, preference } = req.body;
   try {
@@ -112,7 +129,9 @@ const getMultiplePoints = async (req, res) => {
 module.exports = {
   createPoint,
   editPoint,
-  deletePoint,getMultiplePoints
+  deletePoint,
+  getMultiplePoints,
+  createSinglePoint,
   //   getPoint,
   //   getAllPoints,
 };
