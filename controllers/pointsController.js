@@ -1,16 +1,21 @@
-const Point = require("../schemas/Point");
-const User = require("../schemas/User");
+const Point = require('../schemas/Point');
+const User = require('../schemas/User');
 
 const createPoint = async (req, res) => {
   const { name, coords, address, preference } = req.body;
+
   try {
+    let insertName = name;
+    if (name === '') {
+      insertName = address.split(',')[0];
+    }
     const point = await Point.create({
-      name,
+      name: insertName,
       coords,
       address,
       preference,
     });
-    if (!point) return res.status(401).json({ msg: "No point found." });
+    if (!point) return res.status(401).json({ msg: 'No point found.' });
     await point.save();
     const { _id } = req.user;
     const user = await User.findByIdAndUpdate(
@@ -20,11 +25,11 @@ const createPoint = async (req, res) => {
       },
       { new: true, upsert: true, projection: { password: 0 } }
     )
-      .populate({ path: "friends.user", select: "-password" })
-      .populate("favorites")
-      .populate("travelPlans");
+      .populate({ path: 'friends.user', select: '-password' })
+      .populate('favorites')
+      .populate('travelPlans');
 
-    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    if (!user) return res.status(200).json({ msg: 'No matching user found' });
     else res.status(200).json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -40,7 +45,7 @@ const createSinglePoint = async (req, res) => {
       address,
       preference,
     });
-    if (!point) return res.status(401).json({ msg: "No point found." });
+    if (!point) return res.status(401).json({ msg: 'No point found.' });
     await point.save();
     res.status(200).json({ data: point });
   } catch (error) {
@@ -61,7 +66,7 @@ const editPoint = async (req, res) => {
       },
       { new: true }
     );
-    if (!point) return res.status(401).json({ msg: "No point found." });
+    if (!point) return res.status(401).json({ msg: 'No point found.' });
     res.status(201).json({ data: point });
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -72,7 +77,7 @@ const deletePoint = async (req, res) => {
   const { _id } = req.body;
   try {
     const point = await Point.deleteOne({ _id });
-    if (!point) return res.status(401).json({ msg: "No point found." });
+    if (!point) return res.status(401).json({ msg: 'No point found.' });
 
     const { _id: userID } = req.user;
     const user = await User.findByIdAndUpdate(
@@ -81,9 +86,9 @@ const deletePoint = async (req, res) => {
         $pull: { favorites: _id },
       },
       { new: true, projection: { password: 0 } }
-    ).populate(["friends.user", "favorites", "travelPlans"]);
+    ).populate(['friends.user', 'favorites', 'travelPlans']);
 
-    if (!user) return res.status(200).json({ msg: "No matching user found" });
+    if (!user) return res.status(200).json({ msg: 'No matching user found' });
     else
       res.status(200).json({ data: user, msg: `Deleted point with id ${_id}` });
   } catch (error) {
@@ -119,7 +124,7 @@ const getMultiplePoints = async (req, res) => {
   });
   try {
     const points = await Point.find({ $or: [...idArray] });
-    if (!points) return res.status(401).json({ msg: "No point found." });
+    if (!points) return res.status(401).json({ msg: 'No point found.' });
     res.status(200).json({ data: points });
   } catch (error) {
     res.status(400).json({ error: error.message });
